@@ -6,19 +6,33 @@ then
 	echo "Registrando uma nova conta de usuário local"
 	echo ""
 	
-    # Parte 1: Receber dados com o comando read
+    # Receber dados com o comando read
 	echo "A seguir informe os dados da conta"
 	read -p "Nome de usuário: " USER_NAME
 	read -p "Nome da pessoa responsável pela conta: " COMMENT
 	read -p "Senha da conta: " PASSWORD
 	
-    # Parte 2: Criar o usuário com o script useradd atribuindo nome de
+    # Criar o usuário com o script useradd atribuindo nome de
     # usuário e nome da pessoa responsável
-	useradd -c "${COMMENT}" -m ${USER_NAME} 
+	useradd -c "${COMMENT}" -m ${USER_NAME}
+
+    # Em caso de erro ao criar o usuário
+    if [[ "${?}" -ne 0 ]]
+    then
+	echo "Erro ao criar conta de usuário"
+	exit 1
+    fi
 	
-    # Parte 3: Atribuir a senha ao nome de usuário criado anteriormente,
+    # Atribuir a senha ao nome de usuário criado anteriormente,
     # através de um redirecionamento para o script chpasswd
 	echo "${USER_NAME}:${PASSWORD}" | chpasswd
+
+    # Em caso de erro ao atribuir a senha ao usuário
+    if [[ "${?}" -ne 0 ]]
+    then
+	echo "Erro ao atribuir a senha de usuário"
+	exit 1
+    fi
 	
     # Parte 4: Forçar a escolha de uma nova senha mais segura
 	passwd -e ${USER_NAME}
