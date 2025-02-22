@@ -12,11 +12,12 @@ then
 	read -p "Nome da pessoa responsável pela conta: " COMMENT
 	read -p "Senha da conta: " PASSWORD
 	
-    # Parte 2: Criar o usuário com o script useradd
+    # Parte 2: Criar o usuário com o script useradd atribuindo nome de
+    # usuário e nome da pessoa responsável
 	useradd -c "${COMMENT}" -m ${USER_NAME} 
 	
-    # Parte 3: Redirecionar a variavel PASSWORD para o script
-    # passwd afim de registrar a senha da conta de usuário criada
+    # Parte 3: Atribuir a senha ao nome de usuário criado anteriormente,
+    # através de um redirecionamento para o script chpasswd
 	echo "${USER_NAME}:${PASSWORD}" | chpasswd
 	
     # Parte 4: Forçar a escolha de uma nova senha mais segura
