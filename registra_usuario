@@ -26,5 +26,6 @@ then
 # Em caso deste script não ser chamado pelo usuário root
 else
 	echo "Erro - este script deve ser executado com privilégios root"
+	exit 1
 fi
 
