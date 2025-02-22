@@ -1,0 +1,12 @@
+#!/bin/bash
+
+usuario_logado=`whoami`
+
+echo "Exibindo as informações do usuário que chamou esse script"
+if [[ "${UID}" -eq 0 ]]
+then
+	echo "(Este é o usuário root!)"
+fi
+echo "Nome: $usuario_logado"
+echo "Identificador (UID): ${UID}"
+

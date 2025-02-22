@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Este script necessita privilégios root
+if [[ "${UID}" -eq 0 ]]
+then
+	echo "Registrando uma nova conta de usuário local"
+	echo ""
+	
+    # Parte 1: Receber dados com o comando read
+	echo "A seguir informe os dados da conta"
+	read -p "Nome de usuário: " USER_NAME
+	read -p "Nome da pessoa responsável pela conta: " COMMENT
+	read -p "Senha da conta: " PASSWORD
+	
+    # Parte 2: Criar o usuário com o script useradd
+	useradd -c "${COMMENT}" -m ${USER_NAME} 
+	
+    # Parte 3: Redirecionar a variavel PASSWORD para o script
+    # passwd afim de registrar a senha da conta de usuário criada
+	echo "${USER_NAME}:${PASSWORD}" | chpasswd
+	
+    # Parte 4: Forçar a escolha de uma nova senha mais segura
+	passwd -e ${USER_NAME}
+	
+# Em caso deste script não ser chamado pelo usuário root
+else
+	echo "Erro - este script deve ser executado com privilégios root"
+fi
+

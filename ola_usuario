@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Exibindo uma mensagem de olá com o nome
+# do usuário atualmente logado no terminal
+
+usuario_logado=`whoami`
+echo "Olá $usuario_logado"
