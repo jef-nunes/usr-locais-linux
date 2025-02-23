@@ -12,5 +12,6 @@ PW_PREFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
 PW_SUFFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
 # Formatar a senha final
 PASSWORD="${PW_PREFIX}${PASSWORD_TMP}${PW_SUFFIX}"
+echo "Exemplo de senha aleatória (não utilizar essa senha por segurança)"
 echo "${PASSWORD}"
 
