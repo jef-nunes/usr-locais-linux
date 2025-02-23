@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Utilizar a contagem de nano segundos
+# UNIX time + número aleatório da builtin
+# RANDOM + soma hash para geração de
+# uma senha aleatória, bem como especificar
+# o tamanho da senha para 32 caractéres
+PASSWORD_TMP=$(date +%s%N${RANDOM} | sha256sum | head -c32)
+# Adicionar alguns caracteres especiais no início
+# e no final da senha gerada
+PW_PREFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
+PW_SUFFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
+# Formatar a senha final
+PASSWORD="${PW_PREFIX}${PASSWORD_TMP}${PW_SUFFIX}"
+echo "${PASSWORD}"
+
