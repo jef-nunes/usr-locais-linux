@@ -1,4 +1,4 @@
-## Sobre
+## Sobre 🤖
 Este repositório contem um conjunto de scripts voltados para o gerenciamento de contas locais no Linux. A seguir uma breve explicação de cada script:
 <br><br>**_gerar_executaveis**: Torna os scripts de gerenciamento de conta executáveis pelo sistema.
 <br><br>**gerar_senha**: Gera uma senha aleatória e forte e em seguida printa o resultado no terminal.
