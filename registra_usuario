@@ -10,9 +10,9 @@ then
 	echo "A seguir informe os dados da conta"
 	read -p "Nome de usuário: " USER_NAME
 	read -p "Nome da pessoa responsável pela conta: " COMMENT
-	echo "Você deseja gerar uma senha aleatória? (Responder com "s" para sim, "n" para não)"
+	echo "Você deseja gerar uma senha aleatória? (Responder com [s] para sim, [n] para não)"
 	read GERAR_SENHA
-	if [[ "$GERAR_SENHA" == "y" || "$GERAR_SENHA" == "Y" ]]
+	if [[ "$GERAR_SENHA" == "s" || "$GERAR_SENHA" == "S" ]]
 	then
 		PASSWORD=$(./gerar_senha)
 		if [[ "${?}" -ne 0 ]]
@@ -46,12 +46,15 @@ then
 	exit 1
     fi
 	
-    # Parte 4: Forçar a escolha de uma nova senha mais segura
-	passwd -e ${USER_NAME}
+    # Forçar a escolha de uma nova senha mais segura
+    # caso a senha não tenha sido gerada aleatoriamente
+    if [[ "$GERAR_SENHA" != "s" && "$GERAR_SENHA" != "S" ]]
+    then	
+        passwd -e ${USER_NAME}
+    fi
 	
 # Em caso deste script não ser chamado pelo usuário root
 else
 	echo "Erro - este script deve ser executado com privilégios root"
 	exit 1
 fi
-
