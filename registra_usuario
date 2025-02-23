@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Automatizar registro de conta de usuário Linux
 # Este script necessita privilégios root
 if [[ "${UID}" -eq 0 ]]
 then
