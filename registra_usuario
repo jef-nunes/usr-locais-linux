@@ -21,7 +21,7 @@ then
 			exit 1
 		fi
 	else
-		read -p "Digite a senha da conta: " PASSWORD
+		read -sp "Digite a senha da conta: " PASSWORD
 	fi
 	
     # Criar o usuário com o script useradd atribuindo nome de
