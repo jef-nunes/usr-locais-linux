@@ -1,0 +1,4 @@
+#!/bin/bash
+
+USUARIOS=$(cat /etc/passwd)
+echo "$USUARIOS"
