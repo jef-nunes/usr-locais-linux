@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Prompt para registrar uma nova conta de usuário local
+
+# Este script necessita privilégios root
+if [[ "${UID}" -eq 0 ]]
+then
+	echo "Registrando uma nova conta de usuário local..."
+	echo ""
+	
+    # Receber dados com o comando read
+	echo "A seguir informe os dados da conta"
+	read -p "Nome de usuário: " USER_NAME
+	read -p "Nome da pessoa responsável pela conta: " COMMENT
+	echo "Você deseja gerar uma senha aleatória? (Responder com [s] para sim, [n] para não): "
+	read GERAR_SENHA
+	if [[ "$GERAR_SENHA" == "s" || "$GERAR_SENHA" == "S" ]]
+	then
+		# Utilizar a contagem de nano segundos
+		# UNIX time + número aleatório da builtin
+		# RANDOM + soma hash para geração de
+		# uma senha aleatória, bem como especificar
+		# o tamanho da senha para 32 caractéres
+		PASSWORD_TMP=$(date +%s%N${RANDOM} | sha256sum | head -c32)
+		# Adicionar alguns caracteres especiais no início
+		# e no final da senha gerada
+		PW_PREFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
+		PW_SUFFIX=$(echo '!@#$%^&*()_-+=' | fold -w1 | shuf | head -c1)
+		# Formatar a senha final
+		PASSWORD="${PW_PREFIX}${PASSWORD_TMP}${PW_SUFFIX}"
+		if [[ "${?}" -ne 0 ]]
+		then
+			echo "Erro ao gerar senha aleatória."
+			exit 1
+        else
+            echo "A senha foi gerada com sucesso, salve-a em um local seguro."
+            echo "Senha: $PASSWORD"
+		fi
+	else
+		read -sp "Digite a senha da conta: " PASSWORD
+	fi
+	
+    # Criar o usuário com o script useradd atribuindo nome de
+    # usuário e nome da pessoa responsável
+	useradd -c "${COMMENT}" -m ${USER_NAME}
+
+    # Em caso de erro ao criar o usuário
+    if [[ "${?}" -ne 0 ]]
+    then
+	echo "Erro ao criar conta de usuário."
+	exit 1
+    fi
+	
+    # Atribuir a senha ao nome de usuário criado anteriormente,
+    # através de um redirecionamento para o script chpasswd
+	echo "${USER_NAME}:${PASSWORD}" | chpasswd
+
+    # Em caso de erro ao atribuir a senha ao usuário
+    if [[ "${?}" -ne 0 ]]
+    then
+	echo "Erro ao atribuir a senha de usuário."
+	exit 1
+    fi
+	
+    # Forçar a escolha de uma nova senha mais segura
+    # caso a senha não tenha sido gerada aleatoriamente
+    if [[ "$GERAR_SENHA" != "s" && "$GERAR_SENHA" != "S" ]]
+    then	
+        passwd -e ${USER_NAME}
+    fi
+
+    # Exibir mensagem de sucesso
+    echo " "
+    echo "registra_usuario: O usuário foi criado com sucesso."
+	
+# Em caso deste script não ser chamado pelo usuário root
+else
+	echo "Erro - este script deve ser executado com privilégios root."
+	exit 1
+fi

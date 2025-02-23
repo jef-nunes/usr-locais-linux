@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Script para verificar se um usuário existe
+
+if [ -z "$1" ]; then
+    echo "Erro - Uso incorreto do script."
+    echo "Sintaxe correta: $0 <nome_do_usuario>"
+    exit 1
+fi
+
+RESULTADO=$(getent passwd "$1")
+
+if [ -n "$RESULTADO" ]; then
+    echo "Usuário encontrado:"
+    echo "$RESULTADO"
+else
+    echo "Usuário '$1' não encontrado."
+    exit 1
+fi
+

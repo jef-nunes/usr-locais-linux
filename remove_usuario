@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Prompt para remover uma conta de usuário local
+
+# Este script necessita privilégios root
+if [[ "${UID}" -ne 0 ]]; then
+    echo "Erro - este script deve ser chamado pelo root."
+    exit 1
+fi
+
+if [[ -z "$1" ]]; then
+    echo "Erro - Uso incorreto do script."
+    echo "Sintaxe correta: $0 <nome_do_usuario>"
+    exit 1
+else
+    USUARIO_ALVO=$1
+fi
+
+USUARIO_EXISTE=$(getent passwd "$USUARIO_ALVO")
+
+if [[ -n "$USUARIO_EXISTE" ]]; then
+    echo "Prosseguir com a remoção do usuário $USUARIO_ALVO ?"
+    echo "[s] SIM, [n] NÃO"
+    read -r PROSSEGUIR
+    if [[ "$PROSSEGUIR" == [sS] ]]; then
+        userdel -r "$USUARIO_ALVO"
+        
+        if [[ $? -ne 0 ]]; then
+            echo "Erro ao remover o usuário com o programa userdel."
+            exit 1
+        else
+            echo "A conta de usuário $USUARIO_ALVO foi removida."
+        fi
+    else
+        echo "Operação cancelada."
+        exit 0
+    fi
+else
+    echo "Usuário '$USUARIO_ALVO' não encontrado."
+    exit 1
+fi
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+chmod +x gerar_senha
+chmod +x listar_usuarios
+chmod +x remove_usuario
+chmod +x info_usuario
+chmod +x registra_usuario
+chmod +x usuario_existe
