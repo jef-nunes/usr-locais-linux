@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+import os
+import subprocess
+import sys
+
+# Chamar programa que registra efetivamente a conta no sistema
+def printar_informacoes():
+    try:
+        whoami = subprocess.run(["whoami"], check=True, text=True)
+        if whoami.returncode != 0:
+            print("Erro: Falha ao obter nome de usuário com o programa whoami")
+            sys.exit(1)
+        print(f"Nome de usuário: {whoami.stdout}")
+        print(f"Identificador (UID): {os.getuid()}")
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+# Script chamado
+if __name__ == "__main__":
+    printar_informacoes()
