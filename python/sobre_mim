@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-# Chamar programa que registra efetivamente a conta no sistema
+# Mostrar informações do usuário o qual chamar esse script
 def printar_informacoes():
     try:
         whoami = subprocess.run(["whoami"], check=True, text=True)
