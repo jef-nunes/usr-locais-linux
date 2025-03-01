@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+
+# Script para registrar uma conta
+# de usuário local em sistema Linux
+
+import os
+import re
+import secrets
+import string
+import subprocess
+import sys
+
+# Gerar uma senha forte de 32 caracteres
+# contendo caracteres alfanuméricos e símbolos
+def gerar_senha() -> str:
+    charset = string.ascii_letters + string.digits + string.punctuation
+    return "".join(secrets.choice(charset) for _ in range(32))
+
+# Valida a escolha do nome de responsável pela conta
+def validar_nome_real(nome_real: str) -> bool:
+    return re.match(r"^[a-zA-ZáéíóúàèìòùãẽĩõũâêîôûçÇ0-9\s]+$",nome_real)
+
+# Valida a escolha de nome de usuário
+def validar_nome_usuario(nome_usuario: str) -> bool:
+    return nome_usuario == re.sub(r"[^a-zA-Z0-9_]","",nome_usuario)
+
+# Chamar programa que registra efetivamente a conta no sistema
+def efetiva_registro_usuario(nome_real:str, nome_usuario:str):
+    try:
+        comando_useradd = ["useradd","-c",nome_real,"-m",nome_usuario]
+        rodar_useradd = subprocess.run(comando_useradd, check=True)
+        if rodar_useradd.returncode != 0:
+            print("Erro: Falha ao criar usuário com o programa useradd")
+            sys.exit(1)
+        print("Usuário criado")
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+# Chamar programa para atribuir a senha ao usuário
+def vincula_senha(nome_usuario:str, senha:str):
+    try:
+        entrada_chpasswd = f"{nome_usuario}:{senha}".encode("utf-8")
+        comando_chpasswd = ["chpasswd"]
+        rodar_chpasswd = subprocess.run(
+            comando_chpasswd,
+            input=entrada_chpasswd,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        if rodar_chpasswd.returncode != 0:
+            print("Erro ao vincular senha ao usuário com o programa chpasswd")
+            sys.exit(1)
+        print("Senha vinculada")
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+# Chamado ao concluir um registro de nova conta
+# somente se a senha foi criada manualmente
+def forcar_nova_senha(nome_usuario:str):
+    try:
+        comando_passwd = ["passwd","-e",nome_usuario]
+        rodar_passwd = subprocess.run(comando_passwd,check=True)
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+def main():
+    print("Registrando uma conta de usuário local")
+    
+    # Insere e valida nome de usuário
+    nome_usuario = str(input("Crie um nome de usuário: ")).strip()
+    while validar_nome_usuario(nome_usuario) == False:
+        print("Erro - O nome de usuário contem caracteres inválidos. Utilize apenas letras, números e underlines.")
+        nome_usuario = str(input("Nome de usuário: ")).strip()
+    
+    # Insere e valida nome real
+    nome_real = str(input("Informe o nome do responsável pela conta (possivelmente o nome real): ")).strip()
+    while validar_nome_real(nome_real) == False:
+        print("Erro - O nome informado possui caracteres inválidos")
+        nome_real = str(input("Nome do responsável: ")).strip()
+
+    # Inserir ou gerar uma senha forte
+    print("A seguir escolha se deseja criar ou gerar uma senha forte:")
+    print("[1] Criar senha (inserir manualmente)")
+    print("[2] Gerar senha forte de 32 caracteres")
+    escolha_senha = int(input("Informe o número correspondente à escolha: "))
+    while escolha_senha not in [1,2]:
+        print("Erro - escolha uma opção válida")
+        escolha_senha = int(input("Informe o número correspondente à escolha: "))
+    senha = None
+    confirma_senha = None
+    if escolha_senha == 1:
+        senha = input("Crie uma senha forte: ")
+        confirma_senha = input("Confirme a senha: ")
+        while senha != confirma_senha:
+            print("Erro - Não foi possível confirmar a senha, tente novamente")
+            senha = input("Crie uma senha forte: ")
+            confirma_senha = input("Confirme a senha: ")
+    elif escolha_senha == 2:
+        senha = gerar_senha()
+        print(f"Senha gerada com sucesso: {senha}")
+    # Efetivar registro de usuário
+    efetiva_registro_usuario(nome_real,nome_usuario)
+    # Vincular a senha
+    vincula_senha(nome_usuario,senha)
+    # Em caso da senha de usuário ter sida inserida manualmente
+    # forçar uma escolha de uma senha segura no próximo login
+    if escolha_senha == 1:
+        forcar_nova_senha()
+    print("Usuário registrado com sucesso!")
+
+
+# Script foi chamado
+if __name__ == "__main__":
+    if os.getuid() == 0:
+        main()
+    else:
+        print("Erro: Este programa só deve ser chamado pelo usuário root")
+        sys.exit(1)
+    
+
