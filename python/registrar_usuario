@@ -30,7 +30,7 @@ def efetiva_registro_usuario(nome_real:str, nome_usuario:str):
         comando_useradd = ["useradd","-c",nome_real,"-m",nome_usuario]
         rodar_useradd = subprocess.run(comando_useradd, check=True)
         if rodar_useradd.returncode != 0:
-            print("Erro: Falha ao criar usuário com o programa useradd")
+            print("Erro: Falha ao criar usuário com o programa useradd.")
             sys.exit(1)
         print("Usuário criado")
     except Exception as e:
@@ -49,7 +49,7 @@ def vincula_senha(nome_usuario:str, senha:str):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         if rodar_chpasswd.returncode != 0:
-            print("Erro ao vincular senha ao usuário com o programa chpasswd")
+            print("Erro ao vincular senha ao usuário com o programa chpasswd.")
             sys.exit(1)
         print("Senha vinculada")
     except Exception as e:
@@ -95,12 +95,12 @@ def main():
         senha = input("Crie uma senha forte: ")
         confirma_senha = input("Confirme a senha: ")
         while senha != confirma_senha:
-            print("Erro - Não foi possível confirmar a senha, tente novamente")
+            print("Erro - Não foi possível confirmar a senha, tente novamente.")
             senha = input("Crie uma senha forte: ")
             confirma_senha = input("Confirme a senha: ")
     elif escolha_senha == 2:
         senha = gerar_senha()
-        print(f"Senha gerada com sucesso: {senha}")
+        print(f"Senha gerada com sucesso:\n{senha}")
     # Efetivar registro de usuário
     efetiva_registro_usuario(nome_real,nome_usuario)
     # Vincular a senha
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     if os.getuid() == 0:
         main()
     else:
-        print("Erro: Este programa só deve ser chamado pelo usuário root")
+        print("Erro: Este programa só deve ser chamado pelo usuário root!")
         sys.exit(1)
     
 

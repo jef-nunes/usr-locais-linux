@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import subprocess
+import sys
+
+# Obter lista de contas de usuário através do comando cat
+# e em seguida printar esta lista no terminal
+def printar_informacoes():
+    try:
+        lista_usuarios = subprocess.run(["cat","/etc/passwd"], check=True, text=True)
+        if lista_usuarios.returncode != 0:
+            print("Erro: Falha ao obter lista de usuários com o comando cat.")
+            sys.exit(1)
+        print(f"Lista de usuários:\n {lista_usuarios.stdout}")
+    except Exception as e:
+        print(f"Erro: {e}")
+        sys.exit(1)
+
+# Script chamado
+if __name__ == "__main__":
+    printar_informacoes()
