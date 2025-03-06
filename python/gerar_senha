@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
 
+import random
 import secrets
 import string
 
 # Gerar uma senha forte de 32 caracteres
 # contendo caracteres alfanuméricos e símbolos
 def gerar_senha() -> str:
-    charset = string.ascii_letters + string.digits + string.punctuation
-    return "".join(secrets.choice(charset) for _ in range(32))
+    # Conjunto de caracteres
+    charset = list(string.ascii_letters+string.digits+string.punctuation)
+    # Variavel que armazena a senha
+    password = ""
+    # Escolhe 32 caracteres aleatórios a partir do conjunto de caracteres
+    for i in range(32):
+        password += secrets.choice(charset)
+    # Transformar a variável em uma lista
+    password = list(password)
+    # Substituir 3 caracteres aleatórios da lista por novos símbolos
+    for i in range(3):
+        index = random.randint(0,len(password)-1)
+        new_symbol = secrets.choice(list(string.punctuation))
+        password[index] = new_symbol
+    # Transformar a lista em uma string
+    password = "".join(x for x in password)
+    # Retornar resultado
+    return password
 
 # Script chamado
 if __name__ == "__main__":
